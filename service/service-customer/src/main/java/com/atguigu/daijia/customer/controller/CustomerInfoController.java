@@ -20,6 +20,19 @@ public class CustomerInfoController {
 	@Autowired
 	private CustomerInfoService customerInfoService;
 
+
+	/**
+	 * 微信小程序登录接口
+	 * @param code 微信小程序登录所上传凭证
+	 * @return 返回用户id -
+	 */
+	@Operation(summary = "微信小程序登录")
+	@GetMapping("/login/{code}")
+	public Result<Long> login(@PathVariable String code){
+
+		return Result.ok(customerInfoService.login(code));
+	}
+
 	@Operation(summary = "获取客户基本信息")
 	@GetMapping("/getCustomerInfo/{customerId}")
 	public Result<CustomerInfo> getCustomerInfo(@PathVariable Long customerId) {
