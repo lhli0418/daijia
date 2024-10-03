@@ -29,6 +29,11 @@ public class CustomerInfoServiceImpl extends ServiceImpl<CustomerInfoMapper, Cus
     @Autowired
     private CustomerLoginLogMapper customerLoginLogMapper;
 
+    /**
+     * 微信小程序登录接口
+     * @param code 微信小程序端传入登录凭证
+     * @return 用户id
+     */
     @Override
     public Long login(String code) {
         // 1 获取code值,使用微信工具包对象,获取微信唯一标识openid
