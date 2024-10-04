@@ -8,12 +8,15 @@ import com.atguigu.daijia.customer.mapper.CustomerLoginLogMapper;
 import com.atguigu.daijia.customer.service.CustomerInfoService;
 import com.atguigu.daijia.model.entity.customer.CustomerInfo;
 import com.atguigu.daijia.model.entity.customer.CustomerLoginLog;
+import com.atguigu.daijia.model.vo.customer.CustomerLoginVo;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import lombok.extern.slf4j.Slf4j;
 import me.chanjar.weixin.common.error.WxErrorException;
+import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.util.StringUtils;
 
 @Slf4j
 @Service
@@ -70,5 +73,26 @@ public class CustomerInfoServiceImpl extends ServiceImpl<CustomerInfoMapper, Cus
         // 5 返回用户id
 
         return customerInfo.getId();
+    }
+
+    /**
+     * 根据用户id查询用户信息
+     * @param customerId
+     * @return
+     */
+    @Override
+    public CustomerLoginVo getCustomerLoginInfo(Long customerId) {
+        CustomerInfo customerInfo = customerInfoMapper.selectById(customerId);
+
+        CustomerLoginVo customerLoginVo = new CustomerLoginVo();
+        // beanUtilS.copyProperties() 对应信息自动拷贝
+        BeanUtils.copyProperties(customerInfo,customerLoginVo);
+
+        // 判断是否绑定手机号码，如果未绑定，小程序端发起绑定事件
+        boolean isBindPhone = StringUtils.hasText(customerInfo.getPhone());
+
+        customerLoginVo.setIsBindPhone(isBindPhone);
+        return customerLoginVo;
+
     }
 }

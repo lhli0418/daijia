@@ -3,6 +3,7 @@ package com.atguigu.daijia.customer.controller;
 import com.atguigu.daijia.common.result.Result;
 import com.atguigu.daijia.customer.service.CustomerInfoService;
 import com.atguigu.daijia.model.entity.customer.CustomerInfo;
+import com.atguigu.daijia.model.vo.customer.CustomerLoginVo;
 import io.swagger.v3.oas.annotations.Operation;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,6 +21,16 @@ public class CustomerInfoController {
 	@Autowired
 	private CustomerInfoService customerInfoService;
 
+	/**
+	 * 获取客户登录信息
+	 * @param customerId 通过顾客id查询信息
+	 * @return
+	 */
+	@Operation(summary = "获取客户登录信息")
+	@GetMapping("/getCustomerLoginInfo/{customerId}")
+	public Result<CustomerLoginVo> getCustomerLoginInfo(@PathVariable Long customerId ){
+		return Result.ok(customerInfoService.getCustomerLoginInfo(customerId));
+	}
 
 	/**
 	 * 微信小程序登录接口
@@ -38,5 +49,7 @@ public class CustomerInfoController {
 	public Result<CustomerInfo> getCustomerInfo(@PathVariable Long customerId) {
 		return Result.ok(customerInfoService.getById(customerId));
 	}
+
+
 }
 
