@@ -1,5 +1,7 @@
 package com.atguigu.daijia.customer.service;
 
+import com.atguigu.daijia.model.vo.customer.CustomerLoginVo;
+
 public interface CustomerService {
 
 
@@ -9,4 +11,6 @@ public interface CustomerService {
      * @return 返回token令牌
      */
     String login(String code);
+
+    CustomerLoginVo getCustomerLoginInfo(Long customerId);
 }
