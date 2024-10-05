@@ -2,8 +2,10 @@ package com.atguigu.daijia.customer.controller;
 
 import com.atguigu.daijia.common.constant.RedisConstant;
 import com.atguigu.daijia.common.execption.GuiguException;
+import com.atguigu.daijia.common.login.GuiguLogin;
 import com.atguigu.daijia.common.result.Result;
 import com.atguigu.daijia.common.result.ResultCodeEnum;
+import com.atguigu.daijia.common.util.AuthContextHolder;
 import com.atguigu.daijia.customer.service.CustomerService;
 import com.atguigu.daijia.model.vo.customer.CustomerLoginVo;
 import io.swagger.v3.oas.annotations.Operation;
@@ -40,19 +42,17 @@ public class CustomerController {
 
     /**
      * 获取客户登录信息
-     * @param token
+     * @param
      * @return
      */
+    @GuiguLogin
     @Operation(summary = "获取客户登录信息")
     @GetMapping("/getCustomerLoginInfo")
-    public Result<CustomerLoginVo> getCustomerLoginInfo(@RequestHeader(value = "token") String token){
+    public Result<CustomerLoginVo> getCustomerLoginInfo(){
 
-        // 通过请求头中的token查询redis
-        String customerId = (String) redisTemplate.opsForValue().get(RedisConstant.USER_LOGIN_KEY_PREFIX + token);
-        if (!StringUtils.hasText(customerId)){
-            throw new GuiguException(ResultCodeEnum.DATA_ERROR);
-        }
-        return Result.ok(customerService.getCustomerLoginInfo(Long.parseLong(customerId)));
+        Long customerId = AuthContextHolder.getUserId();
+
+        return Result.ok(customerService.getCustomerLoginInfo(customerId));
     }
 
 }
