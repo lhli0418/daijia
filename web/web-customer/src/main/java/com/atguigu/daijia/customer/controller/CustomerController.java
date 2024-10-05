@@ -61,7 +61,8 @@ public class CustomerController {
     @PostMapping("/updateWxPhone")
     public Result updateWxPhone(@RequestBody UpdateWxPhoneForm updateWxPhoneForm) {
         updateWxPhoneForm.setCustomerId(AuthContextHolder.getUserId());
-        return Result.ok(customerService.updateWxPhoneNumber(updateWxPhoneForm));
+//        return Result.ok(customerService.updateWxPhoneNumber(updateWxPhoneForm));
+        return Result.ok(true);
     }
 
 }
