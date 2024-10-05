@@ -6,6 +6,7 @@ import com.atguigu.daijia.common.result.Result;
 import com.atguigu.daijia.common.result.ResultCodeEnum;
 import com.atguigu.daijia.customer.client.CustomerInfoFeignClient;
 import com.atguigu.daijia.customer.service.CustomerService;
+import com.atguigu.daijia.model.form.customer.UpdateWxPhoneForm;
 import com.atguigu.daijia.model.vo.customer.CustomerLoginVo;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -85,5 +86,16 @@ public class CustomerServiceImpl implements CustomerService {
         // 返回用户信息
 
         return customerLoginVo;
+    }
+
+    /**
+     * 更新用户手机号
+     * @param updateWxPhoneForm
+     * @return
+     */
+    @Override
+    public Boolean updateWxPhoneNumber(UpdateWxPhoneForm updateWxPhoneForm) {
+        customerInfoFeignClient.updateWxPhoneNumber(updateWxPhoneForm);
+        return true;
     }
 }

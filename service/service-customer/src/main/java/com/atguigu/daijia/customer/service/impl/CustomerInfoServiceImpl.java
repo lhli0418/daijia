@@ -2,20 +2,25 @@ package com.atguigu.daijia.customer.service.impl;
 
 import cn.binarywang.wx.miniapp.api.WxMaService;
 import cn.binarywang.wx.miniapp.bean.WxMaJscode2SessionResult;
+import cn.binarywang.wx.miniapp.bean.WxMaPhoneNumberInfo;
+import com.alibaba.fastjson.JSON;
 import com.atguigu.daijia.customer.config.WxConfigOperator;
 import com.atguigu.daijia.customer.mapper.CustomerInfoMapper;
 import com.atguigu.daijia.customer.mapper.CustomerLoginLogMapper;
 import com.atguigu.daijia.customer.service.CustomerInfoService;
 import com.atguigu.daijia.model.entity.customer.CustomerInfo;
 import com.atguigu.daijia.model.entity.customer.CustomerLoginLog;
+import com.atguigu.daijia.model.form.customer.UpdateWxPhoneForm;
 import com.atguigu.daijia.model.vo.customer.CustomerLoginVo;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import me.chanjar.weixin.common.error.WxErrorException;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StringUtils;
 
 @Slf4j
@@ -94,5 +99,28 @@ public class CustomerInfoServiceImpl extends ServiceImpl<CustomerInfoMapper, Cus
         customerLoginVo.setIsBindPhone(isBindPhone);
         return customerLoginVo;
 
+    }
+
+    /**
+     * 更新用户微信手机号码
+     * @param updateWxPhoneForm
+     * @return
+     */
+    @SneakyThrows
+    @Transactional(rollbackFor = {Exception.class})
+    @Override
+    public Boolean updateWxPhoneNumber(UpdateWxPhoneForm updateWxPhoneForm) {
+        // 调用微信API 获取用户手机号
+        WxMaPhoneNumberInfo phoneNoInfo = wxMaService.getUserService().getPhoneNoInfo(updateWxPhoneForm.getCode());
+        String phoneNumber = phoneNoInfo.getPhoneNumber();
+        log.info("phoneInfo:{}", JSON.toJSONString(phoneNoInfo));
+
+        Long customerId = updateWxPhoneForm.getCustomerId();
+
+        CustomerInfo customerInfo = new CustomerInfo();
+        customerInfo.setPhone(phoneNumber);
+        customerInfo.setId(customerId);
+
+        return this.updateById(customerInfo);
     }
 }
