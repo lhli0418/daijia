@@ -1,7 +1,10 @@
 package com.atguigu.daijia.driver.controller;
 
+import com.atguigu.daijia.common.login.GuiguLogin;
 import com.atguigu.daijia.common.result.Result;
+import com.atguigu.daijia.common.util.AuthContextHolder;
 import com.atguigu.daijia.driver.service.DriverService;
+import com.atguigu.daijia.model.vo.driver.DriverLoginVo;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.extern.slf4j.Slf4j;
@@ -27,6 +30,12 @@ public class DriverController {
         return Result.ok(driverService.login(code));
     }
 
-
+    @Operation(summary = "获取司机登录信息")
+    @GuiguLogin
+    @GetMapping("/getDriverLoginInfo")
+    public Result<DriverLoginVo> getDriverLoginInfo() {
+        Long driverId = AuthContextHolder.getUserId();
+        return Result.ok(driverService.getDriverLoginInfo(driverId));
+    }
 }
 

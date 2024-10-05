@@ -16,15 +16,18 @@ import com.atguigu.daijia.model.entity.driver.DriverInfo;
 import com.atguigu.daijia.model.entity.driver.DriverLoginLog;
 import com.atguigu.daijia.model.entity.driver.DriverSet;
 import com.atguigu.daijia.model.vo.customer.CustomerInfoVo;
+import com.atguigu.daijia.model.vo.customer.CustomerLoginVo;
 import com.atguigu.daijia.model.vo.driver.DriverLoginVo;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import lombok.extern.slf4j.Slf4j;
 import me.chanjar.weixin.common.error.WxErrorException;
+import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.PropertySource;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.StringUtils;
 
 import java.math.BigDecimal;
 
@@ -101,5 +104,25 @@ public class DriverInfoServiceImpl extends ServiceImpl<DriverInfoMapper, DriverI
         driverLoginLogMapper.insert(driverLoginLog);
 
         return driverId;
+    }
+
+    /**
+     * 获取司机登录信息
+     * @param driverId
+     * @return
+     */
+    @Override
+    public DriverLoginVo getDriverLoginInfo(Long driverId) {
+
+        DriverInfo driverInfo = driverInfoMapper.selectById(driverId);
+        DriverLoginVo driverLoginVo = new DriverLoginVo();
+        BeanUtils.copyProperties(driverInfo,driverLoginVo);
+
+        //是否创建人脸库认证，接单时做人脸识别判断
+        String faceModelId = driverInfo.getFaceModelId();
+        boolean isArchiveFace = StringUtils.hasText(faceModelId);
+        driverLoginVo.setIsArchiveFace(isArchiveFace);
+
+        return driverLoginVo;
     }
 }
