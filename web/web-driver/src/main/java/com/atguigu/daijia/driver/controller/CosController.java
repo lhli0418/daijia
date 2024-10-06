@@ -22,7 +22,7 @@ public class CosController {
     private CosService cosService;
 
     @Operation(summary = "上传")
-    @GuiguLogin
+//    @GuiguLogin
     @PostMapping("/upload")
     public Result<CosUploadVo> upload(@RequestPart("file") MultipartFile file,
                                       @RequestParam(name = "path",defaultValue = "auth")String path){
