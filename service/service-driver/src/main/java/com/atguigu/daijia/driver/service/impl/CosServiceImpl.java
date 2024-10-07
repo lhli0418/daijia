@@ -8,18 +8,20 @@ import com.qcloud.cos.COSClient;
 import com.qcloud.cos.ClientConfig;
 import com.qcloud.cos.auth.BasicCOSCredentials;
 import com.qcloud.cos.auth.COSCredentials;
+import com.qcloud.cos.http.HttpMethodName;
 import com.qcloud.cos.http.HttpProtocol;
-import com.qcloud.cos.model.ObjectMetadata;
-import com.qcloud.cos.model.PutObjectRequest;
-import com.qcloud.cos.model.PutObjectResult;
-import com.qcloud.cos.model.StorageClass;
+import com.qcloud.cos.model.*;
 import com.qcloud.cos.region.Region;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
+import org.joda.time.DateTime;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.util.StringUtils;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.net.URL;
+import java.util.Date;
 import java.util.UUID;
 
 @Slf4j
@@ -72,5 +74,21 @@ public class CosServiceImpl implements CosService {
         //图片临时访问url，回显使用
         cosUploadVo.setShowUrl("");
         return cosUploadVo;
+    }
+
+    @Override
+    public String getImageUrl(String path) {
+        if(!StringUtils.hasText(path)) return "";
+
+        COSClient cosClient = this.getPrivateCOSClient();
+
+        GeneratePresignedUrlRequest request =
+                new GeneratePresignedUrlRequest(tencentCloudProperties.getBucketPrivate(), path, HttpMethodName.GET);
+        //设置临时URL有效期为15分钟
+        Date expiration = new DateTime().plusMinutes(15).toDate();
+        request.setExpiration(expiration);
+        URL url = cosClient.generatePresignedUrl(request);
+        cosClient.shutdown();
+        return url.toString();
     }
 }
