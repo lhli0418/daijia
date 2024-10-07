@@ -72,7 +72,8 @@ public class CosServiceImpl implements CosService {
         CosUploadVo cosUploadVo = new CosUploadVo();
         cosUploadVo.setUrl(uploadPath);
         //图片临时访问url，回显使用
-        cosUploadVo.setShowUrl("");
+        String imageUrl = this.getImageUrl(uploadPath);
+        cosUploadVo.setShowUrl(imageUrl);
         return cosUploadVo;
     }
 
