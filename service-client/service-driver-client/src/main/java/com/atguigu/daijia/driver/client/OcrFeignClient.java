@@ -13,4 +13,12 @@ import org.springframework.web.multipart.MultipartFile;
 public interface OcrFeignClient {
 
 
+    /**
+     * 身份证识别
+     * consumes = MediaType.MULTIPART_FORM_DATA_VALUE 表示以上传文件形式进行传递
+     * @param file
+     * @return
+     */
+    @PostMapping(value = "/ocr/idCardOcr", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    Result<IdCardOcrVo> idCardOcr(@RequestPart("file") MultipartFile file);
 }
