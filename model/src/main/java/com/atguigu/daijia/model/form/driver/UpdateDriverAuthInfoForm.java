@@ -7,7 +7,7 @@ import lombok.Data;
 import java.util.Date;
 
 @Data
-public class UpdateDriverAuthInfoForm {
+public class    UpdateDriverAuthInfoForm {
 
     @Schema(description = "司机Id")
     private Long driverId;

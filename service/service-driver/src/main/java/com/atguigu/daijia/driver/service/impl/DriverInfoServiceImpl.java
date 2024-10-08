@@ -16,6 +16,7 @@ import com.atguigu.daijia.model.entity.driver.DriverAccount;
 import com.atguigu.daijia.model.entity.driver.DriverInfo;
 import com.atguigu.daijia.model.entity.driver.DriverLoginLog;
 import com.atguigu.daijia.model.entity.driver.DriverSet;
+import com.atguigu.daijia.model.form.driver.UpdateDriverAuthInfoForm;
 import com.atguigu.daijia.model.vo.customer.CustomerInfoVo;
 import com.atguigu.daijia.model.vo.customer.CustomerLoginVo;
 import com.atguigu.daijia.model.vo.driver.DriverAuthInfoVo;
@@ -152,5 +153,19 @@ public class DriverInfoServiceImpl extends ServiceImpl<DriverInfoMapper, DriverI
 
         return driverAuthInfoVo;
 
+    }
+
+    /**
+     * 修改司机认证信息
+     * @param updateDriverAuthInfoForm
+     * @return
+     */
+    @Override
+    public Boolean updateDriverAuthInfo(UpdateDriverAuthInfoForm updateDriverAuthInfoForm) {
+        Long driverId = updateDriverAuthInfoForm.getDriverId();
+        DriverInfo driverInfo = new DriverInfo();
+        driverInfo.setId(driverId);
+        BeanUtils.copyProperties(updateDriverAuthInfoForm,driverInfo);
+        return this.updateById(driverInfo);
     }
 }
