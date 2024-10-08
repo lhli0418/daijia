@@ -77,6 +77,11 @@ public class CosServiceImpl implements CosService {
         return cosUploadVo;
     }
 
+    /**
+     * 生成照片回显地址
+     * @param path
+     * @return
+     */
     @Override
     public String getImageUrl(String path) {
         if(!StringUtils.hasText(path)) return "";

@@ -8,5 +8,10 @@ public interface CosService {
 
     CosUploadVo upload(MultipartFile file, String path);
 
+    /**
+     * 生成照片回显地址
+     * @param path
+     * @return
+     */
     String getImageUrl(String path);
 }

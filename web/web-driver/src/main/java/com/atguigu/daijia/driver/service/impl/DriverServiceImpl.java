@@ -6,6 +6,7 @@ import com.atguigu.daijia.common.result.Result;
 import com.atguigu.daijia.common.result.ResultCodeEnum;
 import com.atguigu.daijia.driver.client.DriverInfoFeignClient;
 import com.atguigu.daijia.driver.service.DriverService;
+import com.atguigu.daijia.model.vo.driver.DriverAuthInfoVo;
 import com.atguigu.daijia.model.vo.driver.DriverLoginVo;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
@@ -75,5 +76,17 @@ public class DriverServiceImpl implements DriverService {
     public DriverLoginVo getDriverLoginInfo(Long driverId) {
         Result<DriverLoginVo> result = driverInfoFeignClient.getDriverLoginInfo(driverId);
         return result.getData();
+    }
+
+    /**
+     * 获取司机认证信息
+     * @param driverId
+     * @return
+     */
+    @Override
+    public DriverAuthInfoVo getDriverAuthInfo(Long driverId) {
+
+        Result<DriverAuthInfoVo> driverAuthInfo = driverInfoFeignClient.getDriverAuthInfo(driverId);
+        return driverAuthInfo.getData();
     }
 }
