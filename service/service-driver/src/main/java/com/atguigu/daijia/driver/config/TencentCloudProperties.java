@@ -8,6 +8,7 @@ import org.springframework.stereotype.Component;
  * ClassName: TencentCloudProperties
  * package: com.atguigu.daijia.driver.config
  * Description:
+ *      腾讯云配置类
  *
  * @Author lh
  * @Create 2024/10/6 17:12
@@ -22,4 +23,5 @@ public class TencentCloudProperties {
     private String secretKey;
     private String region;
     private String bucketPrivate;
+    private String persionGroupId;
 }

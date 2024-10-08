@@ -28,7 +28,6 @@
             <artifactId>tencentcloud-sdk-java</artifactId>
         </dependency>
 
-
     </dependencies>
 
     <build>
