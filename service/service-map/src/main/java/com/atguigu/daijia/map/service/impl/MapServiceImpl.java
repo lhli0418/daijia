@@ -23,7 +23,7 @@ import java.util.Map;
 @SuppressWarnings({"unchecked", "rawtypes"})
 public class MapServiceImpl implements MapService {
 
-    @Value("${tencent.cloud.map}")
+    @Value("${tencent.map.key}")
     private String key; // 腾讯地图服务
 
     @Autowired
@@ -31,6 +31,7 @@ public class MapServiceImpl implements MapService {
 
     @Override
     public DrivingLineVo calculateDrivingLine(CalculateDrivingLineForm calculateDrivingLineForm) {
+        System.out.println(key);
         String url = "https://apis.map.qq.com/ws/direction/v1/driving/?from={from}&to={to}&key={key}";
 
         Map<String,String> map = new HashMap<>();
@@ -63,12 +64,7 @@ public class MapServiceImpl implements MapService {
         // 路线
         drivingLineVo.setPolyline(route.getJSONArray("polyline"));
 
-        new Thread(new Runnable() {
-            @Override
-            public void run() {
 
-            }
-        }).start();
         return drivingLineVo;
     }
 }

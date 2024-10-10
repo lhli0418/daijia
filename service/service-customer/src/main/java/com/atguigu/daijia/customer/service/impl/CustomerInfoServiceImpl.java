@@ -4,7 +4,7 @@ import cn.binarywang.wx.miniapp.api.WxMaService;
 import cn.binarywang.wx.miniapp.bean.WxMaJscode2SessionResult;
 import cn.binarywang.wx.miniapp.bean.WxMaPhoneNumberInfo;
 import com.alibaba.fastjson.JSON;
-import com.atguigu.daijia.customer.config.WxConfigOperator;
+import com.atguigu.daijia.customer.config.WxConfigProperties;
 import com.atguigu.daijia.customer.mapper.CustomerInfoMapper;
 import com.atguigu.daijia.customer.mapper.CustomerLoginLogMapper;
 import com.atguigu.daijia.customer.service.CustomerInfoService;
