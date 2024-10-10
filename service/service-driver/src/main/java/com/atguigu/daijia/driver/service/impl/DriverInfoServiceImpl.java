@@ -222,6 +222,7 @@ public class DriverInfoServiceImpl extends ServiceImpl<DriverInfoMapper, DriverI
             // 输出json格式的字符串回包
             System.out.println(AbstractModel.toJsonString(resp));
 
+            // 创建人脸识别模型后，腾讯云返回模型id
             String faceId = resp.getFaceId();
             if (StringUtils.hasText(faceId)){
                 //人脸校验必要参数，保存到数据库表
