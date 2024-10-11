@@ -7,6 +7,7 @@ import com.atguigu.daijia.model.form.order.OrderInfoForm;
 import com.atguigu.daijia.order.mapper.OrderInfoMapper;
 import com.atguigu.daijia.order.mapper.OrderStatusLogMapper;
 import com.atguigu.daijia.order.service.OrderInfoService;
+import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,6 +25,12 @@ public class OrderInfoServiceImpl extends ServiceImpl<OrderInfoMapper, OrderInfo
 
     @Autowired
     private OrderStatusLogMapper orderStatusLogMapper;
+
+    /**
+     * 保存订单信息
+     * @param orderInfoForm
+     * @return
+     */
     @Override
     public Long saveOrderInfo(OrderInfoForm orderInfoForm) {
 
@@ -40,6 +47,11 @@ public class OrderInfoServiceImpl extends ServiceImpl<OrderInfoMapper, OrderInfo
         return orderInfo.getId();
     }
 
+    /**
+     * 订单日志保存
+     * @param orderId 订单id
+     * @param status 订单状态
+     */
     public void log(Long orderId, Integer status) {
         OrderStatusLog orderStatusLog = new OrderStatusLog();
         orderStatusLog.setOrderId(orderId);
@@ -48,4 +60,23 @@ public class OrderInfoServiceImpl extends ServiceImpl<OrderInfoMapper, OrderInfo
         orderStatusLogMapper.insert(orderStatusLog);
     }
 
+    /**
+     * 根据订单id查询订单状态
+     * @param orderId
+     * @return
+     */
+    @Override
+    public Integer getOrderStatus(Long orderId) {
+
+        LambdaQueryWrapper<OrderInfo> lambdaQueryWrapper = new LambdaQueryWrapper<>();
+        lambdaQueryWrapper.eq(OrderInfo::getId,orderId);
+        lambdaQueryWrapper.select(OrderInfo::getStatus);
+
+        OrderInfo orderInfo = orderInfoMapper.selectOne(lambdaQueryWrapper);
+        if (orderInfo == null) {
+            //返回null，feign解析会抛出异常，给默认值，后续会用
+            return OrderStatus.NULL_ORDER.getStatus();
+        }
+        return orderInfo.getStatus();
+    }
 }

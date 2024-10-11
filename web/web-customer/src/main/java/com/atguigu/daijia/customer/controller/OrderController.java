@@ -51,5 +51,12 @@ public class OrderController {
         return Result.ok(orderId);
     }
 
+    @Operation(summary = "查询订单状态")
+    @GuiguLogin
+    @GetMapping("/getOrderStatus/{orderId}")
+    public Result<Integer> getOrderStatus(@PathVariable Long orderId){
+        Integer status = orderService.getOrderStatus(orderId);
+        return Result.ok(status);
+    }
 }
 

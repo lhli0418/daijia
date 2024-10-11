@@ -98,4 +98,14 @@ public class OrderServiceImpl implements OrderService {
 
         return orderId;
     }
+
+    /**
+     * 获取订单状态
+     * @param orderId
+     * @return
+     */
+    @Override
+    public Integer getOrderStatus(Long orderId) {
+        return orderInfoFeignClient.getOrderStatus(orderId).getData();
+    }
 }
