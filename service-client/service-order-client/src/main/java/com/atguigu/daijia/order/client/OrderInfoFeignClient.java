@@ -2,6 +2,7 @@ package com.atguigu.daijia.order.client;
 
 import com.atguigu.daijia.common.result.Result;
 import com.atguigu.daijia.model.form.order.OrderInfoForm;
+import com.atguigu.daijia.model.vo.dispatch.NewOrderTaskVo;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -27,4 +28,12 @@ public interface OrderInfoFeignClient {
      */
     @GetMapping("/order/info/getOrderStatus/{orderId}")
     Result<Integer> getOrderStatus(@PathVariable("orderId") Long orderId);
+
+    /**
+     * 添加并启动新订单任务
+     * @param newOrderDispatchVo
+     * @return
+     */
+    @PostMapping("/dispatch/newOrder/addAndStartTask")
+    Result<Long> addAndStartTask(@RequestBody NewOrderTaskVo newOrderDispatchVo);
 }
