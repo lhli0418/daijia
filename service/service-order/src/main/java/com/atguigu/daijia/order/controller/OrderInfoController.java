@@ -31,7 +31,6 @@ public class OrderInfoController {
         return Result.ok(orderId);
     }
 
-
     /**
      * 根据订单id获取订单状态
      * @param orderId

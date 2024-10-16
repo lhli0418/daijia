@@ -14,12 +14,14 @@ import com.atguigu.daijia.model.vo.dispatch.NewOrderTaskVo;
 import com.atguigu.daijia.model.vo.map.NearByDriverVo;
 import com.atguigu.daijia.model.vo.order.NewOrderDataVo;
 import com.atguigu.daijia.order.client.OrderInfoFeignClient;
+import com.baomidou.mybatisplus.core.conditions.SharedString;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
@@ -120,5 +122,38 @@ public class NewOrderServiceImpl implements NewOrderService {
         );
         return true;
 
+    }
+
+    /**
+     * 查询司机新订单数据
+     * @param driverId
+     * @return
+     */
+    @Override
+    public List<NewOrderDataVo> findNewOrderQueueData(Long driverId) {
+        List<NewOrderDataVo> newOrderDataVoList = new ArrayList<>();
+        String key = RedisConstant.DRIVER_ORDER_TEMP_LIST + driverId;
+        Long size = redisTemplate.opsForList().size(key);
+        if (size != null && size > 0){
+            for (int i = 0; i < size; i++) {
+                String content = (String)redisTemplate.opsForList().leftPop(key);
+                NewOrderDataVo newOrderDataVo = JSONObject.parseObject(content, NewOrderDataVo.class);
+                newOrderDataVoList.add(newOrderDataVo);
+            }
+        }
+        return newOrderDataVoList;
+    }
+
+    /**
+     * 清空司机新订单队列数据
+     * @param driverId
+     * @return
+     */
+    @Override
+    public Boolean clearNewOrderQueueData(Long driverId) {
+        String key = RedisConstant.DRIVER_ORDER_TEMP_LIST + driverId;
+        //直接删除，司机开启服务后，有新订单会自动创建容器
+        redisTemplate.delete(key);
+        return true;
     }
 }
