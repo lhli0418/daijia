@@ -71,5 +71,19 @@ public class DriverController {
         Long driverId = AuthContextHolder.getUserId();
         return Result.ok(driverService.isFaceRecognition(driverId));
     }
+
+    /**
+     * 给定一张人脸图片和一个 PersonId，判断图片中的人和 PersonId 对应的人是否为同一人
+     * 人脸验证用于判断 “此人是否是此人”，“此人”的信息已存于人员库中
+     * @param driverFaceModelForm
+     * @return
+     */
+    @Operation(summary = "验证司机人脸")
+    @GuiguLogin
+    @PostMapping("/verifyDriverFace")
+    public Result<Boolean> verifyDriverFace(@RequestBody DriverFaceModelForm driverFaceModelForm) {
+        driverFaceModelForm.setDriverId(AuthContextHolder.getUserId());
+        return Result.ok(driverService.verifyDriverFace(driverFaceModelForm));
+    }
 }
 

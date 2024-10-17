@@ -6,6 +6,7 @@ import com.atguigu.daijia.common.result.Result;
 import com.atguigu.daijia.common.result.ResultCodeEnum;
 import com.atguigu.daijia.driver.client.DriverInfoFeignClient;
 import com.atguigu.daijia.driver.service.DriverService;
+import com.atguigu.daijia.model.entity.driver.DriverFaceRecognition;
 import com.atguigu.daijia.model.form.driver.DriverFaceModelForm;
 import com.atguigu.daijia.model.form.driver.UpdateDriverAuthInfoForm;
 import com.atguigu.daijia.model.vo.driver.DriverAuthInfoVo;
@@ -120,5 +121,15 @@ public class DriverServiceImpl implements DriverService {
     @Override
     public Boolean isFaceRecognition(Long driverId) {
         return driverInfoFeignClient.isFaceRecognition(driverId).getData();
+    }
+
+    /**
+     * 司机人脸验证
+     * @param driverFaceModelForm
+     * @return
+     */
+    @Override
+    public Boolean verifyDriverFace(DriverFaceModelForm driverFaceModelForm) {
+        return driverInfoFeignClient.verifyDriverFace(driverFaceModelForm).getData();
     }
 }
