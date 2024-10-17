@@ -6,17 +6,11 @@ import com.atguigu.daijia.common.constant.SystemConstant;
 import com.atguigu.daijia.common.execption.GuiguException;
 import com.atguigu.daijia.common.result.ResultCodeEnum;
 import com.atguigu.daijia.driver.config.TencentCloudProperties;
-import com.atguigu.daijia.driver.mapper.DriverAccountMapper;
-import com.atguigu.daijia.driver.mapper.DriverInfoMapper;
-import com.atguigu.daijia.driver.mapper.DriverLoginLogMapper;
-import com.atguigu.daijia.driver.mapper.DriverSetMapper;
+import com.atguigu.daijia.driver.mapper.*;
 import com.atguigu.daijia.driver.service.CosService;
 import com.atguigu.daijia.driver.service.DriverInfoService;
 import com.atguigu.daijia.model.entity.customer.CustomerInfo;
-import com.atguigu.daijia.model.entity.driver.DriverAccount;
-import com.atguigu.daijia.model.entity.driver.DriverInfo;
-import com.atguigu.daijia.model.entity.driver.DriverLoginLog;
-import com.atguigu.daijia.model.entity.driver.DriverSet;
+import com.atguigu.daijia.model.entity.driver.*;
 import com.atguigu.daijia.model.form.driver.DriverFaceModelForm;
 import com.atguigu.daijia.model.form.driver.UpdateDriverAuthInfoForm;
 import com.atguigu.daijia.model.vo.customer.CustomerInfoVo;
@@ -37,6 +31,7 @@ import com.tencentcloudapi.iai.v20200303.models.CreatePersonRequest;
 import com.tencentcloudapi.iai.v20200303.models.CreatePersonResponse;
 import lombok.extern.slf4j.Slf4j;
 import me.chanjar.weixin.common.error.WxErrorException;
+import org.joda.time.DateTime;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.PropertySource;
@@ -51,6 +46,8 @@ import java.math.BigDecimal;
 @SuppressWarnings({"unchecked", "rawtypes"})
 public class DriverInfoServiceImpl extends ServiceImpl<DriverInfoMapper, DriverInfo> implements DriverInfoService {
 
+    @Autowired
+    private DriverFaceRecognitionMapper driverFaceRecognitionMapper;
     @Autowired
     private TencentCloudProperties tencentCloudProperties;
     @Autowired
@@ -247,5 +244,19 @@ public class DriverInfoServiceImpl extends ServiceImpl<DriverInfoMapper, DriverI
         LambdaQueryWrapper<DriverSet> lambdaQueryWrapper = new LambdaQueryWrapper<>();
         lambdaQueryWrapper.eq(DriverSet::getDriverId,driverId);
         return driverSetMapper.selectOne(lambdaQueryWrapper);
+    }
+
+    /**
+     * 根据司机id和当日日期 判断司机当日是否进行人脸识别
+     * @param driverId
+     * @return
+     */
+    @Override
+    public Boolean isFaceRecognition(Long driverId) {
+        LambdaQueryWrapper<DriverFaceRecognition> lambdaQueryWrapper = new LambdaQueryWrapper<>();
+        lambdaQueryWrapper.eq(DriverFaceRecognition::getDriverId,driverId);
+        lambdaQueryWrapper.eq(DriverFaceRecognition::getFaceDate,new DateTime().toString("yyyy-MM-dd"));
+        Long count = driverFaceRecognitionMapper.selectCount(lambdaQueryWrapper);
+        return count != 0;
     }
 }
