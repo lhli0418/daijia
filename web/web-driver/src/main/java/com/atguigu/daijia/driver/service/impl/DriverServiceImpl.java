@@ -27,6 +27,7 @@ import java.util.concurrent.TimeUnit;
 @SuppressWarnings({"unchecked", "rawtypes"})
 public class DriverServiceImpl implements DriverService {
 
+
     @Autowired
     private NewOrderFeignClient newOrderFeignClient;
 
@@ -167,6 +168,25 @@ public class DriverServiceImpl implements DriverService {
         locationFeignClient.removeDriverLocation(driverId);
 
         // 清空司机新订单临时队列
+        newOrderFeignClient.clearNewOrderQueueData(driverId);
+
+        return true;
+    }
+
+    /**
+     * 司机停止接单服务
+     * @param driverId
+     * @return
+     */
+    @Override
+    public Boolean stopService(Long driverId) {
+        //更新司机接单状态
+        driverInfoFeignClient.updateServiceStatus(driverId, 0);
+
+        //删除司机位置信息
+        locationFeignClient.removeDriverLocation(driverId);
+
+        //清空司机新订单队列
         newOrderFeignClient.clearNewOrderQueueData(driverId);
 
         return true;
