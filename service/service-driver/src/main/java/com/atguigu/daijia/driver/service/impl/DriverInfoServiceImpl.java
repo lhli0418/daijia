@@ -19,6 +19,7 @@ import com.atguigu.daijia.model.vo.customer.CustomerLoginVo;
 import com.atguigu.daijia.model.vo.driver.DriverAuthInfoVo;
 import com.atguigu.daijia.model.vo.driver.DriverLoginVo;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
+import com.baomidou.mybatisplus.core.conditions.update.LambdaUpdateWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.tencentcloudapi.common.AbstractModel;
 import com.tencentcloudapi.common.Credential;
@@ -313,6 +314,21 @@ public class DriverInfoServiceImpl extends ServiceImpl<DriverInfoMapper, DriverI
             System.out.println(e.toString());
         }
         throw new GuiguException(ResultCodeEnum.FACE_ERROR);
+    }
+
+    /**
+     * 更新接单状态
+     *
+     * @param driverId
+     * @param status
+     * @return
+     */
+    @Override
+    public Boolean updateServiceStatus(Long driverId, Integer status) {
+        LambdaUpdateWrapper<DriverSet> lambdaUpdateWrapper = new LambdaUpdateWrapper();
+        lambdaUpdateWrapper.eq(DriverSet::getDriverId,driverId).set(DriverSet::getServiceStatus,status);
+        int rows = driverSetMapper.update(null, lambdaUpdateWrapper);
+        return rows != 0;
     }
 
     /**
