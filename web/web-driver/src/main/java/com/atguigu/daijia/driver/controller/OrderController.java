@@ -46,8 +46,17 @@ public class OrderController {
     @GetMapping("/searchDriverCurrentOrder")
     public Result<CurrentOrderInfoVo> searchDriverCurrentOrder() {
         CurrentOrderInfoVo currentOrderInfoVo = new CurrentOrderInfoVo();
+        // TODO 后续完善
         currentOrderInfoVo.setIsHasCurrentOrder(false);
         return Result.ok(currentOrderInfoVo);
+    }
+
+    @Operation(summary = "司机抢单")
+    @GuiguLogin
+    @GetMapping("/robNewOrder/{orderId}")
+    public Result<Boolean> robNewOrder(@PathVariable Long orderId) {
+        Long driverId = AuthContextHolder.getUserId();
+        return Result.ok(orderService.robNewOrder(driverId, orderId));
     }
 }
 

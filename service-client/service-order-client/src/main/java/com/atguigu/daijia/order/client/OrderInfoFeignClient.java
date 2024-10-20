@@ -36,4 +36,13 @@ public interface OrderInfoFeignClient {
      */
     @PostMapping("/dispatch/newOrder/addAndStartTask")
     Result<Long> addAndStartTask(@RequestBody NewOrderTaskVo newOrderDispatchVo);
+
+    /**
+     * 司机抢单
+     * @param driverId
+     * @param orderId
+     * @return
+     */
+    @GetMapping("/order/info/robNewOrder/{driverId}/{orderId}")
+    Result<Boolean> robNewOrder(@PathVariable("driverId") Long driverId, @PathVariable("orderId") Long orderId);
 }
