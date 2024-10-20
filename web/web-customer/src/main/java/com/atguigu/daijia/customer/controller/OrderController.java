@@ -9,6 +9,7 @@ import com.atguigu.daijia.model.form.customer.SubmitOrderForm;
 import com.atguigu.daijia.model.form.map.CalculateDrivingLineForm;
 import com.atguigu.daijia.model.vo.customer.ExpectOrderVo;
 import com.atguigu.daijia.model.vo.dispatch.NewOrderTaskVo;
+import com.atguigu.daijia.model.vo.driver.DriverInfoVo;
 import com.atguigu.daijia.model.vo.map.DrivingLineVo;
 import com.atguigu.daijia.model.vo.order.CurrentOrderInfoVo;
 import com.atguigu.daijia.model.vo.order.OrderInfoVo;
@@ -74,6 +75,14 @@ public class OrderController {
     @PostMapping("/calculateDrivingLine")
     public Result<DrivingLineVo> calculateDrivingLine(@RequestBody CalculateDrivingLineForm calculateDrivingLineForm) {
         return Result.ok(orderService.calculateDrivingLine(calculateDrivingLineForm));
+    }
+
+    @Operation(summary = "根据订单id获取司机基本信息")
+    @GuiguLogin
+    @GetMapping("/getDriverInfo/{orderId}")
+    public Result<DriverInfoVo> getDriverInfo(@PathVariable Long orderId) {
+        Long customerId = AuthContextHolder.getUserId();
+        return Result.ok(orderService.getDriverInfo(orderId, customerId));
     }
 }
 

@@ -5,6 +5,7 @@ import com.atguigu.daijia.common.result.Result;
 import com.atguigu.daijia.common.result.ResultCodeEnum;
 import com.atguigu.daijia.customer.service.OrderService;
 import com.atguigu.daijia.dispatch.client.NewOrderFeignClient;
+import com.atguigu.daijia.driver.client.DriverInfoFeignClient;
 import com.atguigu.daijia.map.client.MapFeignClient;
 import com.atguigu.daijia.model.entity.order.OrderInfo;
 import com.atguigu.daijia.model.form.customer.ExpectOrderForm;
@@ -14,6 +15,7 @@ import com.atguigu.daijia.model.form.order.OrderInfoForm;
 import com.atguigu.daijia.model.form.rules.FeeRuleRequestForm;
 import com.atguigu.daijia.model.vo.customer.ExpectOrderVo;
 import com.atguigu.daijia.model.vo.dispatch.NewOrderTaskVo;
+import com.atguigu.daijia.model.vo.driver.DriverInfoVo;
 import com.atguigu.daijia.model.vo.map.DrivingLineVo;
 import com.atguigu.daijia.model.vo.order.CurrentOrderInfoVo;
 import com.atguigu.daijia.model.vo.order.OrderInfoVo;
@@ -44,6 +46,9 @@ public class OrderServiceImpl implements OrderService {
 
     @Autowired
     private NewOrderFeignClient newOrderFeignClient;
+
+    @Autowired
+    private DriverInfoFeignClient driverInfoFeignClient;
 
 
     /**
@@ -175,5 +180,16 @@ public class OrderServiceImpl implements OrderService {
     @Override
     public DrivingLineVo calculateDrivingLine(CalculateDrivingLineForm calculateDrivingLineForm) {
         return mapFeignClient.calculateDrivingLine(calculateDrivingLineForm).getData();
+    }
+
+    @Override
+    public DriverInfoVo getDriverInfo(Long orderId, Long customerId) {
+
+        OrderInfo orderInfo = orderInfoFeignClient.getOrderInfo(orderId).getData();
+
+        if (orderInfo.getCustomerId().longValue() != customerId.longValue()) {
+            throw new GuiguException(ResultCodeEnum.ILLEGAL_REQUEST);
+        }
+        return driverInfoFeignClient.getDriverInfo(orderInfo.getDriverId()).getData();
     }
 }
