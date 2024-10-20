@@ -22,16 +22,6 @@ import org.springframework.web.bind.annotation.*;
 @SuppressWarnings({"unchecked", "rawtypes"})
 public class OrderController {
 
-    //TODO 后续完善，目前假设乘客当前没有订单
-    @Operation(summary = "查找乘客端当前订单")
-    @GuiguLogin
-    @GetMapping("/searchCustomerCurrentOrder")
-    public Result<CurrentOrderInfoVo> searchCustomerCurrentOrder() {
-        CurrentOrderInfoVo currentOrderInfoVo = new CurrentOrderInfoVo();
-        currentOrderInfoVo.setIsHasCurrentOrder(false);
-        return Result.ok(currentOrderInfoVo);
-    }
-
     @Autowired
     private OrderService orderService;
 
@@ -58,6 +48,14 @@ public class OrderController {
     public Result<Integer> getOrderStatus(@PathVariable Long orderId){
         Integer status = orderService.getOrderStatus(orderId);
         return Result.ok(status);
+    }
+
+    @Operation(summary = "乘客端查找当前订单")
+    @GuiguLogin
+    @GetMapping("/searchCustomerCurrentOrder")
+    public Result<CurrentOrderInfoVo> searchCustomerCurrentOrder() {
+        Long customerId = AuthContextHolder.getUserId();
+        return Result.ok(orderService.searchCustomerCurrentOrder(customerId));
     }
 
 

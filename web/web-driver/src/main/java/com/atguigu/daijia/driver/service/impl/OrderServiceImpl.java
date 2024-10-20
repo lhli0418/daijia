@@ -2,6 +2,7 @@ package com.atguigu.daijia.driver.service.impl;
 
 import com.atguigu.daijia.dispatch.client.NewOrderFeignClient;
 import com.atguigu.daijia.driver.service.OrderService;
+import com.atguigu.daijia.model.vo.order.CurrentOrderInfoVo;
 import com.atguigu.daijia.model.vo.order.NewOrderDataVo;
 import com.atguigu.daijia.order.client.OrderInfoFeignClient;
 import lombok.extern.slf4j.Slf4j;
@@ -50,5 +51,15 @@ public class OrderServiceImpl implements OrderService {
     @Override
     public Boolean robNewOrder(Long driverId, Long orderId) {
         return orderInfoFeignClient.robNewOrder(driverId, orderId).getData();
+    }
+
+    /**
+     * 司机端查找当前订单
+     * @param driverId
+     * @return
+     */
+    @Override
+    public CurrentOrderInfoVo searchDriverCurrentOrder(Long driverId) {
+        return orderInfoFeignClient.searchDriverCurrentOrder(driverId).getData();
     }
 }
