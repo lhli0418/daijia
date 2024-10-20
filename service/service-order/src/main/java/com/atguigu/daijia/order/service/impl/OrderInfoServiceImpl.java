@@ -14,6 +14,8 @@ import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.update.LambdaUpdateWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import org.joda.time.DateTime;
+import org.redisson.api.RLock;
+import org.redisson.api.RedissonClient;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.RedisTemplate;
@@ -35,6 +37,8 @@ public class OrderInfoServiceImpl extends ServiceImpl<OrderInfoMapper, OrderInfo
     @Autowired
     private OrderStatusLogMapper orderStatusLogMapper;
 
+    @Autowired
+    private RedissonClient redissonClient;
     /**
      * 保存订单信息
      * @param orderInfoForm
@@ -109,23 +113,45 @@ public class OrderInfoServiceImpl extends ServiceImpl<OrderInfoMapper, OrderInfo
             // 抢单失败
             throw new GuiguException(ResultCodeEnum.COB_NEW_ORDER_FAIL);
         }
-        // 修改订单状态及司机id
-        // update order_info set status = 2, driver_id = #{driverId}, accept_time = now() where id = #{id}
-        // 修改字段
-        LambdaUpdateWrapper<OrderInfo> lambdaUpdateWrapper = new LambdaUpdateWrapper();
-        lambdaUpdateWrapper.eq(OrderInfo::getId,orderId).set(OrderInfo::getDriverId,driverId)
-                            .set(OrderInfo::getStatus,2).set(OrderInfo::getAcceptTime,new Date());
-        int rows= orderInfoMapper.update(null, lambdaUpdateWrapper);
-        if (rows != 1) {
-            // 抢单失败
+
+        // 初始化分布式锁，创建一个RLock实例
+        RLock lock = redissonClient.getLock(RedisConstant.ROB_NEW_ORDER_LOCK + orderId);
+        try {
+            boolean flag = lock.tryLock(RedisConstant.ROB_NEW_ORDER_LOCK_WAIT_TIME, RedisConstant.ROB_NEW_ORDER_LOCK_LEASE_TIME, TimeUnit.SECONDS);
+            // 获取到锁
+            if (flag) {
+
+                // 二次判断，防止重复抢单
+                if (Boolean.FALSE.equals(redisTemplate.hasKey(RedisConstant.ORDER_ACCEPT_MARK + orderId))){
+                    // 抢单失败
+                    throw new GuiguException(ResultCodeEnum.COB_NEW_ORDER_FAIL);
+                }
+
+                // 修改订单状态及司机id
+                // update order_info set status = 2, driver_id = #{driverId}, accept_time = now() where id = #{id}
+                // 修改字段
+                LambdaUpdateWrapper<OrderInfo> lambdaUpdateWrapper = new LambdaUpdateWrapper();
+                lambdaUpdateWrapper.eq(OrderInfo::getId,orderId).set(OrderInfo::getDriverId,driverId)
+                        .set(OrderInfo::getStatus,2).set(OrderInfo::getAcceptTime,new Date());
+                int rows= orderInfoMapper.update(null, lambdaUpdateWrapper);
+                if (rows != 1) {
+                    // 抢单失败
+                    throw new GuiguException(ResultCodeEnum.COB_NEW_ORDER_FAIL);
+                }
+
+                //记录日志
+                this.log(orderId, 2);
+
+                //删除redis订单标识
+                redisTemplate.delete(RedisConstant.ORDER_ACCEPT_MARK + orderId);
+            }
+        } catch (InterruptedException e) {
             throw new GuiguException(ResultCodeEnum.COB_NEW_ORDER_FAIL);
+        } finally {
+            if(lock.isLocked()) {
+                lock.unlock();
+            }
         }
-
-        //记录日志
-        this.log(orderId, 2);
-
-        //删除redis订单标识
-        redisTemplate.delete(RedisConstant.ORDER_ACCEPT_MARK + orderId);
         return true;
     }
 }
