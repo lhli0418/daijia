@@ -1,5 +1,6 @@
 package com.atguigu.daijia.map.service.impl;
 
+import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import com.atguigu.daijia.common.constant.RedisConstant;
 import com.atguigu.daijia.common.constant.SystemConstant;
@@ -127,5 +128,18 @@ public class LocationServiceImpl implements LocationService {
         redisTemplate.opsForValue().set(key, JSONObject.toJSONString(orderLocationVo));
 
         return true;
+    }
+
+    /**
+     * 司机赶往代驾起始点：获取订单经纬度位置
+     * @param orderId
+     * @return
+     */
+    @Override
+    public OrderLocationVo getCacheOrderLocation(Long orderId) {
+        String key = RedisConstant.UPDATE_ORDER_LOCATION + orderId;
+
+        return JSONObject.parseObject((String)redisTemplate.opsForValue().get(key), OrderLocationVo.class);
+
     }
 }
