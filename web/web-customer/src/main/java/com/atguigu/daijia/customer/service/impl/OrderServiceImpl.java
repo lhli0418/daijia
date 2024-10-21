@@ -213,4 +213,6 @@ public class OrderServiceImpl implements OrderService {
     public OrderLocationVo getCacheOrderLocation(Long orderId) {
         return locationFeignClient.getCacheOrderLocation(orderId).getData();
     }
+
+
 }
