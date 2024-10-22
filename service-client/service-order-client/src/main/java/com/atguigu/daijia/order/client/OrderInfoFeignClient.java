@@ -3,6 +3,7 @@ package com.atguigu.daijia.order.client;
 import com.atguigu.daijia.common.result.Result;
 import com.atguigu.daijia.model.entity.order.OrderInfo;
 import com.atguigu.daijia.model.form.order.OrderInfoForm;
+import com.atguigu.daijia.model.form.order.StartDriveForm;
 import com.atguigu.daijia.model.form.order.UpdateOrderCartForm;
 import com.atguigu.daijia.model.vo.dispatch.NewOrderTaskVo;
 import com.atguigu.daijia.model.vo.order.CurrentOrderInfoVo;
@@ -90,4 +91,12 @@ public interface OrderInfoFeignClient {
      */
     @PostMapping("/order/info//updateOrderCart")
     Result<Boolean> updateOrderCart(@RequestBody UpdateOrderCartForm updateOrderCartForm);
+
+    /**
+     * 开始代驾服务,更新订单信息
+     * @param startDriveForm
+     * @return
+     */
+    @PostMapping("/order/info/startDrive")
+    Result<Boolean> startDrive(@RequestBody StartDriveForm startDriveForm);
 }
