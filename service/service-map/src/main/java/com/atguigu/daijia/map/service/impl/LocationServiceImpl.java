@@ -6,14 +6,19 @@ import com.atguigu.daijia.common.constant.RedisConstant;
 import com.atguigu.daijia.common.constant.SystemConstant;
 import com.atguigu.daijia.common.result.Result;
 import com.atguigu.daijia.driver.client.DriverInfoFeignClient;
+import com.atguigu.daijia.map.repository.OrderServiceLocationRepository;
 import com.atguigu.daijia.map.service.LocationService;
 import com.atguigu.daijia.model.entity.driver.DriverSet;
+import com.atguigu.daijia.model.entity.map.OrderServiceLocation;
+import com.atguigu.daijia.model.form.map.OrderServiceLocationForm;
 import com.atguigu.daijia.model.form.map.SearchNearByDriverForm;
 import com.atguigu.daijia.model.form.map.UpdateDriverLocationForm;
 import com.atguigu.daijia.model.form.map.UpdateOrderLocationForm;
 import com.atguigu.daijia.model.vo.map.NearByDriverVo;
 import com.atguigu.daijia.model.vo.map.OrderLocationVo;
 import lombok.extern.slf4j.Slf4j;
+import org.bson.types.ObjectId;
+import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.geo.*;
 import org.springframework.data.mongodb.core.aggregation.RedactOperation;
@@ -24,10 +29,7 @@ import org.springframework.util.CollectionUtils;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Objects;
+import java.util.*;
 
 @Slf4j
 @Service
@@ -36,6 +38,9 @@ public class LocationServiceImpl implements LocationService {
 
     @Autowired
     private RedisTemplate redisTemplate;
+
+    @Autowired
+    private OrderServiceLocationRepository orderServiceLocationRepository;
 
     @Autowired
     private DriverInfoFeignClient driverInfoFeignClient;
@@ -141,5 +146,28 @@ public class LocationServiceImpl implements LocationService {
 
         return JSONObject.parseObject((String)redisTemplate.opsForValue().get(key), OrderLocationVo.class);
 
+    }
+
+    /**
+     * 开始代驾服务：保存代驾服务订单位置
+     * @param orderLocationServiceFormList
+     * @return
+     */
+    @Override
+    public Boolean saveOrderServiceLocation(List<OrderServiceLocationForm> orderLocationServiceFormList) {
+        List<OrderServiceLocation> orderServiceLocationList = new ArrayList<>();
+
+        orderLocationServiceFormList.forEach(orderLocationServiceForm -> {
+
+            OrderServiceLocation orderServiceLocation = new OrderServiceLocation();
+            BeanUtils.copyProperties(orderLocationServiceForm,orderServiceLocation);
+            orderServiceLocation.setId(ObjectId.get().toString());
+            orderServiceLocation.setCreateTime(new Date());
+
+            orderServiceLocationList.add(orderServiceLocation);
+        });
+
+        orderServiceLocationRepository.saveAll(orderServiceLocationList);
+        return true;
     }
 }

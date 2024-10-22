@@ -2,6 +2,7 @@ package com.atguigu.daijia.map.controller;
 
 import com.atguigu.daijia.common.result.Result;
 import com.atguigu.daijia.map.service.LocationService;
+import com.atguigu.daijia.model.form.map.OrderServiceLocationForm;
 import com.atguigu.daijia.model.form.map.SearchNearByDriverForm;
 import com.atguigu.daijia.model.form.map.UpdateDriverLocationForm;
 import com.atguigu.daijia.model.form.map.UpdateOrderLocationForm;
@@ -55,6 +56,12 @@ public class LocationController {
     @GetMapping("/getCacheOrderLocation/{orderId}")
     public Result<OrderLocationVo> getCacheOrderLocation(@PathVariable Long orderId) {
         return Result.ok(locationService.getCacheOrderLocation(orderId));
+    }
+
+    @Operation(summary = "开始代驾服务：保存代驾服务订单位置")
+    @PostMapping("/saveOrderServiceLocation")
+    public Result<Boolean> saveOrderServiceLocation(@RequestBody List<OrderServiceLocationForm> orderLocationServiceFormList) {
+        return Result.ok(locationService.saveOrderServiceLocation(orderLocationServiceFormList));
     }
 }
 
