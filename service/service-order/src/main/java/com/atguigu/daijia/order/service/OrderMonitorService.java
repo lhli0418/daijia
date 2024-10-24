@@ -12,4 +12,6 @@ public interface OrderMonitorService extends IService<OrderMonitor> {
 
 
     Boolean updateOrderMonitor(OrderMonitor orderMonitor);
+
+    Long saveOrderMonitor(OrderMonitor orderMonitor);
 }

@@ -17,6 +17,9 @@ public class OrderMonitorServiceImpl extends ServiceImpl<OrderMonitorMapper, Ord
     @Autowired
     private OrderMonitorRecordRepository orderMonitorRecordRepository;
 
+    @Autowired
+    private OrderMonitorMapper orderMonitorMapper;
+
     /**
      * 保存订单监控记录数据到Mongo
      * @param orderMonitorRecord
@@ -46,5 +49,16 @@ public class OrderMonitorServiceImpl extends ServiceImpl<OrderMonitorMapper, Ord
     @Override
     public Boolean updateOrderMonitor(OrderMonitor orderMonitor) {
         return this.updateById(orderMonitor);
+    }
+
+    /**
+     *
+     * @param orderMonitor
+     * @return
+     */
+    @Override
+    public Long saveOrderMonitor(OrderMonitor orderMonitor) {
+        orderMonitorMapper.insert(orderMonitor);
+        return orderMonitor.getId();
     }
 }
