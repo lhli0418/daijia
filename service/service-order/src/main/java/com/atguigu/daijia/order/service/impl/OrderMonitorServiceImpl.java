@@ -5,6 +5,7 @@ import com.atguigu.daijia.model.entity.order.OrderMonitorRecord;
 import com.atguigu.daijia.order.mapper.OrderMonitorMapper;
 import com.atguigu.daijia.order.repository.OrderMonitorRecordRepository;
 import com.atguigu.daijia.order.service.OrderMonitorService;
+import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -25,5 +26,25 @@ public class OrderMonitorServiceImpl extends ServiceImpl<OrderMonitorMapper, Ord
     public Boolean saveOrderMonitorRecord(OrderMonitorRecord orderMonitorRecord) {
         orderMonitorRecordRepository.save(orderMonitorRecord);
         return true;
+    }
+
+    /**
+     * 根据订单id获取订单监控信息
+     * @param orderId
+     * @return
+     */
+    @Override
+    public OrderMonitor getOrderMonitor(Long orderId) {
+        return this.getOne(new LambdaQueryWrapper<OrderMonitor>().eq(OrderMonitor::getOrderId, orderId));
+    }
+
+    /**
+     * 更新订单监控信息
+     * @param orderMonitor
+     * @return
+     */
+    @Override
+    public Boolean updateOrderMonitor(OrderMonitor orderMonitor) {
+        return this.updateById(orderMonitor);
     }
 }
