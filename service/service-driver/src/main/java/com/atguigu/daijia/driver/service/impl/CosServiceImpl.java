@@ -111,4 +111,5 @@ public class CosServiceImpl implements CosService {
         cosClient.shutdown();
         return url.toString();
     }
+
 }
