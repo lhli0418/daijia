@@ -81,4 +81,6 @@ public interface LocationFeignClient {
      */
     @GetMapping("/map/location/calculateOrderRealDistance/{orderId}")
     Result<BigDecimal> calculateOrderRealDistance(@PathVariable Long orderId);
+
+
 }
