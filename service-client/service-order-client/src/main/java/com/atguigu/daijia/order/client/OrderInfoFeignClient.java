@@ -108,8 +108,8 @@ public interface OrderInfoFeignClient {
      * @param endTime
      * @return
      */
-    @GetMapping("/order/info/getOrderNumByTime/{startTime}/{endTime}")
-    Result<Long> getOrderNumByTime(@PathVariable("startTime") String startTime, @PathVariable("endTime") String endTime);
+    @GetMapping("/order/info/getOrderNumByTime/{startTime}/{endTime}/{driverId}")
+    Result<Long> getOrderNumByTime(@PathVariable("startTime") String startTime, @PathVariable("endTime") String endTime ,@PathVariable("driverId") Long driverId);
 
     /**
      * 结束代驾服务更新订单账单

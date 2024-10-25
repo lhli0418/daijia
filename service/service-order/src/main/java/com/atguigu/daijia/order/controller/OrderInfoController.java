@@ -92,9 +92,9 @@ public class OrderInfoController {
     }
 
     @Operation(summary = "根据时间段获取订单数")
-    @GetMapping("/getOrderNumByTime/{startTime}/{endTime}")
-    public Result<Long> getOrderNumByTime(@PathVariable String startTime, @PathVariable String endTime) {
-        return Result.ok(orderInfoService.getOrderNumByTime(startTime, endTime));
+    @GetMapping("/getOrderNumByTime/{startTime}/{endTime}{driverId}")
+    public Result<Long> getOrderNumByTime(@PathVariable String startTime, @PathVariable String endTime,@PathVariable Long driverId) {
+        return Result.ok(orderInfoService.getOrderNumByTime(startTime, endTime,driverId));
     }
 
     @Operation(summary = "结束代驾服务更新订单账单")
