@@ -4,6 +4,7 @@ import com.atguigu.daijia.model.entity.order.OrderInfo;
 import com.atguigu.daijia.model.form.customer.ExpectOrderForm;
 import com.atguigu.daijia.model.form.customer.SubmitOrderForm;
 import com.atguigu.daijia.model.form.map.CalculateDrivingLineForm;
+import com.atguigu.daijia.model.vo.base.PageVo;
 import com.atguigu.daijia.model.vo.customer.ExpectOrderVo;
 import com.atguigu.daijia.model.vo.driver.DriverInfoVo;
 import com.atguigu.daijia.model.vo.map.DrivingLineVo;
@@ -31,4 +32,6 @@ public interface OrderService {
     OrderLocationVo getCacheOrderLocation(Long orderId);
 
     OrderServiceLastLocationVo getOrderServiceLastLocation(Long orderId);
+
+    PageVo findCustomerOrderPage(Long customerId, Long page, Long limit);
 }
