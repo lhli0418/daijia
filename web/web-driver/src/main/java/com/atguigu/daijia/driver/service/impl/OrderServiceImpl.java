@@ -19,6 +19,7 @@ import com.atguigu.daijia.model.form.order.UpdateOrderCartForm;
 import com.atguigu.daijia.model.form.rules.FeeRuleRequestForm;
 import com.atguigu.daijia.model.form.rules.ProfitsharingRuleRequestForm;
 import com.atguigu.daijia.model.form.rules.RewardRuleRequestForm;
+import com.atguigu.daijia.model.vo.base.PageVo;
 import com.atguigu.daijia.model.vo.map.DrivingLineVo;
 import com.atguigu.daijia.model.vo.map.OrderLocationVo;
 import com.atguigu.daijia.model.vo.map.OrderServiceLastLocationVo;
@@ -266,5 +267,17 @@ public class OrderServiceImpl implements OrderService {
     @Override
     public Boolean startDrive(StartDriveForm startDriveForm) {
         return orderInfoFeignClient.startDrive(startDriveForm).getData();
+    }
+
+    /**
+     * 获取司机订单分页列表
+     * @param driverId
+     * @param page
+     * @param limit
+     * @return
+     */
+    @Override
+    public PageVo findDriverOrderPage(Long driverId, Long page, Long limit) {
+        return orderInfoFeignClient.findDriverOrderPage(driverId, page, limit).getData();
     }
 }

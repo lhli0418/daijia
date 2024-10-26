@@ -12,4 +12,7 @@ public interface OrderInfoMapper extends BaseMapper<OrderInfo> {
 
     // 获取乘客订单分页列表
     IPage<OrderListVo> selectCustomerOrderPage(Page<OrderInfo> pageParam, Long customerId);
+
+    // 获取司机订单分页列表
+    IPage<OrderListVo> selectDriverOrderPage(Page<OrderInfo> pageParam, Long driverId);
 }
