@@ -155,5 +155,11 @@ public class OrderInfoController {
     public Result<OrderProfitsharingVo> getOrderProfitsharing(@PathVariable Long orderId) {
         return Result.ok(orderInfoService.getOrderProfitsharing(orderId));
     }
+
+    @Operation(summary = "发送账单信息")
+    @GetMapping("/sendOrderBillInfo/{orderId}/{driverId}")
+    Result<Boolean> sendOrderBillInfo(@PathVariable Long orderId, @PathVariable Long driverId) {
+        return Result.ok(orderInfoService.sendOrderBillInfo(orderId, driverId));
+    }
 }
 
