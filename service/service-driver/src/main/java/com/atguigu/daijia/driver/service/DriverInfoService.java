@@ -9,6 +9,7 @@ import com.atguigu.daijia.model.vo.driver.DriverAuthInfoVo;
 import com.atguigu.daijia.model.vo.driver.DriverInfoVo;
 import com.atguigu.daijia.model.vo.driver.DriverLoginVo;
 import com.baomidou.mybatisplus.extension.service.IService;
+import org.dom4j.io.SAXReader;
 
 public interface DriverInfoService extends IService<DriverInfo> {
 
@@ -32,4 +33,6 @@ public interface DriverInfoService extends IService<DriverInfo> {
     Boolean updateServiceStatus(Long driverId, Integer status);
 
     DriverInfoVo getDriverInfo(Long driverId);
+
+    String getDriverOpenId(Long driverId);
 }
