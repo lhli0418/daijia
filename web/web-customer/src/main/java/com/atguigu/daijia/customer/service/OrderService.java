@@ -4,6 +4,7 @@ import com.atguigu.daijia.model.entity.order.OrderInfo;
 import com.atguigu.daijia.model.form.customer.ExpectOrderForm;
 import com.atguigu.daijia.model.form.customer.SubmitOrderForm;
 import com.atguigu.daijia.model.form.map.CalculateDrivingLineForm;
+import com.atguigu.daijia.model.form.payment.CreateWxPaymentForm;
 import com.atguigu.daijia.model.vo.base.PageVo;
 import com.atguigu.daijia.model.vo.customer.ExpectOrderVo;
 import com.atguigu.daijia.model.vo.driver.DriverInfoVo;
@@ -12,6 +13,7 @@ import com.atguigu.daijia.model.vo.map.OrderLocationVo;
 import com.atguigu.daijia.model.vo.map.OrderServiceLastLocationVo;
 import com.atguigu.daijia.model.vo.order.CurrentOrderInfoVo;
 import com.atguigu.daijia.model.vo.order.OrderInfoVo;
+import com.atguigu.daijia.model.vo.payment.WxPrepayVo;
 
 public interface OrderService {
 
@@ -34,4 +36,6 @@ public interface OrderService {
     OrderServiceLastLocationVo getOrderServiceLastLocation(Long orderId);
 
     PageVo findCustomerOrderPage(Long customerId, Long page, Long limit);
+
+    WxPrepayVo createWxPayment(CreateWxPaymentForm createWxPaymentForm);
 }
