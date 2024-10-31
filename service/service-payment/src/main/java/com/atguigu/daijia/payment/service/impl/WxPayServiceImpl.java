@@ -66,7 +66,9 @@ public class WxPayServiceImpl implements WxPayService {
             // 3.request.setXxx(val)设置所需参数，具体参数可见Request定义
             PrepayRequest request = new PrepayRequest();
             Amount amount = new Amount();
-            amount.setTotal(paymentInfoForm.getAmount().multiply(new BigDecimal(100)).intValue());
+            // 金额
+//            amount.setTotal(paymentInfoForm.getAmount().multiply(new BigDecimal(100)).intValue());
+            amount.setTotal(1); // TODO 为了测试，支付1分钱
             request.setAmount(amount);
             request.setAppid(wxPayV3Properties.getAppid());
             request.setMchid(wxPayV3Properties.getMerchantId());
