@@ -23,14 +23,13 @@ public class WxPayV3Properties {
     /** 回调地址 */
     private String notifyUrl;
 
-    @Bean
     public RSAAutoCertificateConfig getConfig(){
         return new RSAAutoCertificateConfig.Builder()
-                        .merchantId(this.getMerchantId())
-                        .privateKeyFromPath(this.getPrivateKeyPath())
-                        .merchantSerialNumber(this.getMerchantSerialNumber())
-                        .apiV3Key(this.getApiV3key())
-                        .build();
+                .merchantId(this.getMerchantId())
+                .privateKeyFromPath(this.getPrivateKeyPath())
+                .merchantSerialNumber(this.getMerchantSerialNumber())
+                .apiV3Key(this.getApiV3key())
+                .build();
 
     }
 }

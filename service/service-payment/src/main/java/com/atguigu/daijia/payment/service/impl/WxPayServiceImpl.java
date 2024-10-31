@@ -1,5 +1,7 @@
 package com.atguigu.daijia.payment.service.impl;
 
+
+
 import com.alibaba.fastjson2.JSON;
 import com.atguigu.daijia.common.execption.GuiguException;
 import com.atguigu.daijia.common.result.ResultCodeEnum;
@@ -11,6 +13,7 @@ import com.atguigu.daijia.payment.config.WxPayV3Properties;
 import com.atguigu.daijia.payment.mapper.PaymentInfoMapper;
 import com.atguigu.daijia.payment.service.WxPayService;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
+import com.atguigu.daijia.payment.config.WxPayV3Properties;
 import com.wechat.pay.java.core.RSAAutoCertificateConfig;
 import com.wechat.pay.java.core.exception.ServiceException;
 import com.wechat.pay.java.core.notification.NotificationParser;
@@ -37,9 +40,6 @@ public class WxPayServiceImpl implements WxPayService {
     private PaymentInfoMapper paymentInfoMapper;
 
     @Autowired
-    private RSAAutoCertificateConfig rsaAutoCertificateConfig;
-
-    @Autowired
     private WxPayV3Properties wxPayV3Properties;
 
     /**
@@ -61,7 +61,7 @@ public class WxPayServiceImpl implements WxPayService {
                 paymentInfoMapper.insert(paymentInfo);
             }
             // 2.创建微信支付使用对象 构建service
-            JsapiServiceExtension service = new JsapiServiceExtension.Builder().config(rsaAutoCertificateConfig).build();
+            JsapiServiceExtension service = new JsapiServiceExtension.Builder().config(wxPayV3Properties.getConfig()).build();
 
             // 3.request.setXxx(val)设置所需参数，具体参数可见Request定义
             PrepayRequest request = new PrepayRequest();
@@ -143,7 +143,7 @@ public class WxPayServiceImpl implements WxPayService {
 
 
         //3.初始化 NotificationParser
-        NotificationParser parser = new NotificationParser(rsaAutoCertificateConfig);
+        NotificationParser parser = new NotificationParser(wxPayV3Properties.getConfig());
         //4.以支付通知回调为例，验签、解密并转换成 Transaction
         Transaction transaction = parser.parse(requestParam, Transaction.class);
         log.info("成功解析：{}", JSON.toJSONString(transaction));
@@ -164,7 +164,7 @@ public class WxPayServiceImpl implements WxPayService {
     public Boolean queryPayStatus(String orderNo) {
 
         // 构建微信支付操作对象 service
-        JsapiServiceExtension service = new JsapiServiceExtension.Builder().config(rsaAutoCertificateConfig).build();
+        JsapiServiceExtension service = new JsapiServiceExtension.Builder().config(wxPayV3Properties.getConfig()).build();
 
         // QueryOrderByOutTradeNoRequest对象设置参数
         QueryOrderByOutTradeNoRequest queryRequest = new QueryOrderByOutTradeNoRequest();
