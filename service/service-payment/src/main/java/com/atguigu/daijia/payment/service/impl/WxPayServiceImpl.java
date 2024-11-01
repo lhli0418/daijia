@@ -3,8 +3,10 @@ package com.atguigu.daijia.payment.service.impl;
 
 
 import com.alibaba.fastjson2.JSON;
+import com.atguigu.daijia.common.constant.MqConst;
 import com.atguigu.daijia.common.execption.GuiguException;
 import com.atguigu.daijia.common.result.ResultCodeEnum;
+import com.atguigu.daijia.common.service.RabbitService;
 import com.atguigu.daijia.common.util.RequestUtils;
 import com.atguigu.daijia.model.entity.payment.PaymentInfo;
 import com.atguigu.daijia.model.form.payment.PaymentInfoForm;
@@ -26,15 +28,17 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
+import java.util.Date;
 
 @Service
 @Slf4j
 public class WxPayServiceImpl implements WxPayService {
 
-//    @Autowired
-//    private RabbitService rabbitService;
+    @Autowired
+    private RabbitService rabbitService;
 
     @Autowired
     private PaymentInfoMapper paymentInfoMapper;
@@ -111,6 +115,7 @@ public class WxPayServiceImpl implements WxPayService {
      * 支付成功，微信平台回调通知
      * @param request
      */
+    @Transactional
     @Override
     public void wxnotify(HttpServletRequest request) {
         //1.回调通知的验签与解密
@@ -202,17 +207,20 @@ public class WxPayServiceImpl implements WxPayService {
             return;
         }
 
-//        //更新支付信息
-//        paymentInfo.setPaymentStatus(1);
-//        paymentInfo.setOrderNo(transaction.getOutTradeNo());
-//        paymentInfo.setTransactionId(transaction.getTransactionId());
-//        paymentInfo.setCallbackTime(new Date());
-//        paymentInfo.setCallbackContent(JSON.toJSONString(transaction));
-//        paymentInfoMapper.updateById(paymentInfo);
-//        // 表示交易成功！
-//
-//        // 后续更新订单状态！ 使用消息队列！
-//        rabbitService.sendMessage(MqConst.EXCHANGE_ORDER, MqConst.ROUTING_PAY_SUCCESS, paymentInfo.getOrderNo());
+        //更新支付信息
+        paymentInfo.setPaymentStatus(1);
+        paymentInfo.setOrderNo(transaction.getOutTradeNo());
+        paymentInfo.setTransactionId(transaction.getTransactionId());
+        paymentInfo.setCallbackTime(new Date());
+        paymentInfo.setCallbackContent(JSON.toJSONString(transaction));
+        paymentInfoMapper.updateById(paymentInfo);
+        // 表示交易成功！
+
+        // 使用消息队列
+        // 发送端：发送mq消息，传递 订单编号
+        // 接受端：获取订单编号，完成后续处理
+        // 交换机 路由 订单编号
+        rabbitService.sendMessage(MqConst.EXCHANGE_ORDER, MqConst.ROUTING_PAY_SUCCESS, paymentInfo.getOrderNo());
     }
 
 }

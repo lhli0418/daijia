@@ -42,5 +42,11 @@
 			<groupId>org.projectlombok</groupId>
 			<artifactId>lombok</artifactId>
 		</dependency>
+
+		<dependency>
+			<groupId>com.atguigu.daijia</groupId>
+			<artifactId>rabbit-util</artifactId>
+			<version>1.0</version>
+		</dependency>
 	</dependencies>
 </project>
