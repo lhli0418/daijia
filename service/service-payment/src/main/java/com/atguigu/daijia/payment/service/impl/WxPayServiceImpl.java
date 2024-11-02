@@ -8,9 +8,14 @@ import com.atguigu.daijia.common.execption.GuiguException;
 import com.atguigu.daijia.common.result.ResultCodeEnum;
 import com.atguigu.daijia.common.service.RabbitService;
 import com.atguigu.daijia.common.util.RequestUtils;
+import com.atguigu.daijia.driver.client.DriverAccountFeignClient;
 import com.atguigu.daijia.model.entity.payment.PaymentInfo;
+import com.atguigu.daijia.model.enums.TradeType;
+import com.atguigu.daijia.model.form.driver.TransferForm;
 import com.atguigu.daijia.model.form.payment.PaymentInfoForm;
+import com.atguigu.daijia.model.vo.order.OrderRewardVo;
 import com.atguigu.daijia.model.vo.payment.WxPrepayVo;
+import com.atguigu.daijia.order.client.OrderInfoFeignClient;
 import com.atguigu.daijia.payment.config.WxPayV3Properties;
 import com.atguigu.daijia.payment.mapper.PaymentInfoMapper;
 import com.atguigu.daijia.payment.service.WxPayService;
@@ -45,6 +50,12 @@ public class WxPayServiceImpl implements WxPayService {
 
     @Autowired
     private WxPayV3Properties wxPayV3Properties;
+
+    @Autowired
+    private OrderInfoFeignClient orderInfoFeignClient;
+
+    @Autowired
+    private DriverAccountFeignClient driverAccountFeignClient;
 
     /**
      * 
@@ -223,4 +234,28 @@ public class WxPayServiceImpl implements WxPayService {
         rabbitService.sendMessage(MqConst.EXCHANGE_ORDER, MqConst.ROUTING_PAY_SUCCESS, paymentInfo.getOrderNo());
     }
 
+    /**
+     * 乘客支付成功后续业务处理
+     * @param orderNo
+     */
+    
+    @Override
+    public void handleOrder(String orderNo) {
+        //1.更改订单支付状态
+        orderInfoFeignClient.updateOrderPayStatus(orderNo);
+
+        //2.处理系统奖励，打入司机账户
+        OrderRewardVo orderRewardVo = orderInfoFeignClient.getOrderRewardFee(orderNo).getData();
+        if(null != orderRewardVo.getRewardFee() && orderRewardVo.getRewardFee().doubleValue() > 0) {
+            TransferForm transferForm = new TransferForm();
+            transferForm.setTradeNo(orderNo);
+            transferForm.setTradeType(TradeType.REWARD.getType());
+            transferForm.setContent(TradeType.REWARD.getContent());
+            transferForm.setAmount(orderRewardVo.getRewardFee());
+            transferForm.setDriverId(orderRewardVo.getDriverId());
+            driverAccountFeignClient.transfer(transferForm);
+        }
+
+        //3.TODO分账
+    }
 }
