@@ -168,5 +168,11 @@ public class OrderInfoController {
     public Result<OrderPayVo> getOrderPayVo(@PathVariable String orderNo, @PathVariable Long customerId) {
         return Result.ok(orderInfoService.getOrderPayVo(orderNo, customerId));
     }
+
+    @Operation(summary = "更改订单支付状态")
+    @GetMapping("/updateOrderPayStatus/{orderNo}")
+    public Result<Boolean> updateOrderPayStatus(@PathVariable String orderNo) {
+        return Result.ok(orderInfoService.updateOrderPayStatus(orderNo));
+    }
 }
 
