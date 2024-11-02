@@ -500,4 +500,27 @@ public class OrderInfoServiceImpl extends ServiceImpl<OrderInfoMapper, OrderInfo
         }
         return true;
     }
+
+    /**
+     * 获取订单的系统奖励
+     * @param orderNo
+     * @return
+     */
+    @Override
+    public OrderRewardVo getOrderRewardFee(String orderNo) {
+        // 根据订单编号查订单信息 订单id 司机id
+        OrderInfo orderInfo = orderInfoMapper.selectOne(new LambdaQueryWrapper<OrderInfo>().eq(OrderInfo::getOrderNo, orderNo)
+                .select(OrderInfo::getId, OrderInfo::getDriverId));
+
+        // 根据查询的订单id查询系统奖励
+        OrderBill orderBill = orderBillMapper.selectOne(new LambdaQueryWrapper<OrderBill>().eq(OrderBill::getOrderId, orderInfo.getId()).select(OrderBill::getRewardFee));
+
+        // 封装返回参数
+        OrderRewardVo orderRewardVo = new OrderRewardVo();
+        orderRewardVo.setOrderId(orderInfo.getId());
+        orderRewardVo.setRewardFee(orderBill.getRewardFee());
+        orderRewardVo.setDriverId(orderInfo.getDriverId());
+        return orderRewardVo;
+    }
+
 }
