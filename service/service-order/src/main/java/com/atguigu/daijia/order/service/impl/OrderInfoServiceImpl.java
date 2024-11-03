@@ -20,6 +20,8 @@ import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import org.joda.time.DateTime;
+import org.redisson.api.RBlockingQueue;
+import org.redisson.api.RDelayedQueue;
 import org.redisson.api.RLock;
 import org.redisson.api.RedissonClient;
 import org.springframework.beans.BeanUtils;
@@ -71,6 +73,9 @@ public class OrderInfoServiceImpl extends ServiceImpl<OrderInfoMapper, OrderInfo
         orderInfo.setStatus(OrderStatus.WAITING_ACCEPT.getStatus());
         orderInfoMapper.insert(orderInfo);
 
+        // 生产订单之后，发送延迟消息
+        this.sendDelayMessage(orderInfo.getId());
+
         //记录日志
         this.log(orderInfo.getId(),orderInfo.getStatus());
 
@@ -80,6 +85,24 @@ public class OrderInfoServiceImpl extends ServiceImpl<OrderInfoMapper, OrderInfo
                                         RedisConstant.ORDER_ACCEPT_MARK_EXPIRES_TIME, TimeUnit.MINUTES);
 
         return orderInfo.getId();
+    }
+
+    /**
+     * 15分钟内未接单 订单取消 延迟消息
+     * @param orderId
+     */
+    private void sendDelayMessage(Long orderId) {
+
+        try {
+            // 创建一个队列
+            RBlockingQueue<Object> blockingQueue = redissonClient.getBlockingQueue("queue_cancel");
+            // 把队列放到延迟队列中
+            RDelayedQueue<Object> delayedQueue = redissonClient.getDelayedQueue(blockingQueue);
+            // 发送
+            delayedQueue.offer(orderId.toString(),15,TimeUnit.MINUTES);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
     /**
