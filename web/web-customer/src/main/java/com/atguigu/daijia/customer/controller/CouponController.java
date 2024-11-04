@@ -70,5 +70,12 @@ public class CouponController {
     }
 
 
+    @Operation(summary = "领取优惠券")
+    @GuiguLogin
+    @GetMapping("/receive/{couponId}")
+    public Result<Boolean> receive(@PathVariable Long couponId) {
+        Long customerId = AuthContextHolder.getUserId();
+        return Result.ok(couponService.receive(customerId, couponId));
+    }
 }
 
