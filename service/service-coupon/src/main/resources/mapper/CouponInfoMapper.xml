@@ -15,25 +15,26 @@
 	</sql>
 	
      <select id="findNoReceivePage" resultType="com.atguigu.daijia.model.vo.coupon.NoReceiveCouponVo">
-    	select
-			info.id,
-			info.coupon_type,
-			info.name,
-			info.amount,
-			info.discount,
-			info.condition_amount,
-			info.publish_count,
-			info.per_limit,
-			info.expire_time,
-			info.describe
-		from coupon_info info
-		where
-		    info.status = 1
-			and info.receive_count &lt; info.publish_count
-			and (
-			    info.per_limit =0 or info.per_limit &lt; (select count(1) from customer_coupon where customer_id = #{customerId})
-			)
-		order by info.id desc
+		 SELECT
+		 info.id,
+		 info.coupon_type,
+		 info.name,
+		 info.amount,
+		 info.discount,
+		 info.condition_amount,
+		 info.publish_count,
+		 info.per_limit,
+		 info.expire_time,
+		 info.description
+		 FROM coupon_info info
+		 LEFT JOIN (SELECT coupon_id,customer_id,COUNT(coupon_id) cnt
+		 FROM `customer_coupon`
+		 WHERE customer_id = {#customerId}
+		 GROUP BY coupon_id) cc
+		 ON info.id = cc.coupon_id
+		 WHERE info.publish_count &gt; info.receive_count
+		 AND (cc.cnt &lt; info.per_limit or info.per_limit = 0 or cc.cnt is null)
+		 ORDER BY info.id ASC;
     </select>
 
 	<select id="findNoUsePage" resultType="com.atguigu.daijia.model.vo.coupon.NoUseCouponVo">
