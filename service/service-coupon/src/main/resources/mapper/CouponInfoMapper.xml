@@ -55,7 +55,7 @@
 		JOIN customer_coupon cstr
 		ON info.id = cstr.coupon_id
 		WHERE cstr.expire_time &gt; NOW()
-		AND cstr.`status` = 2
+		AND cstr.`status` = 1
 		and cstr.customer_id = {#customerId}
 		ORDER BY info.id ASC
 	</select>
