@@ -68,5 +68,7 @@ public class CouponController {
         PageVo<UsedCouponVo> pageVo = couponService.findUsedPage(customerId, page, limit);
         return Result.ok(pageVo);
     }
+
+
 }
 
