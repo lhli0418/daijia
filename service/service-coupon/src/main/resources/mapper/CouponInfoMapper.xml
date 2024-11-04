@@ -61,26 +61,27 @@
 	</select>
 
 	<select id="findUsedPage" resultType="com.atguigu.daijia.model.vo.coupon.UsedCouponVo">
-		select
-			info.id,
-			info.coupon_type,
-			info.name,
-			info.amount,
-			info.discount,
-			info.condition_amount,
-			info.publish_count,
-			info.per_limit,
-			info.expire_time,
-			info.describe,
+		SELECT
+		info.id,
+		info.coupon_type,
+		info.name,
+		info.amount,
+		info.discount,
+		info.condition_amount,
+		info.publish_count,
+		info.per_limit,
+		info.expire_time,
+		info.description,
 
-			cstr.id as customerCouponId,
-			cstr.used_time
-		from coupon_info info
-		inner join customer_coupon cstr on cstr.coupon_id = info.id
-		where
-		cstr.customer_id = #{customerId}
-		and cstr.status = 2
-		order by cstr.id desc
+		cstr.id as customerCouponId,
+		cstr.used_time
+		FROM coupon_info info
+		JOIN customer_coupon cstr
+		ON info.id = cstr.coupon_id
+		WHERE
+		AND cstr.`status` = 2
+		and cstr.customer_id = {#customerId}
+		ORDER BY info.id ASC
 	</select>
 
 	<update id="updateReceiveCount">
