@@ -546,4 +546,22 @@ public class OrderInfoServiceImpl extends ServiceImpl<OrderInfoMapper, OrderInfo
         return orderRewardVo;
     }
 
+    /**
+     * 超时未接单，订单取消
+     * @param orderId
+     */
+    @Override
+    public void orderCancel(long orderId) {
+        LambdaUpdateWrapper<OrderInfo> lambdaUpdateWrapper = new LambdaUpdateWrapper<>();
+        // 如果订单状态为在等待时再进行修改
+        lambdaUpdateWrapper.eq(OrderInfo::getId,orderId).eq(OrderInfo::getStatus,OrderStatus.WAITING_ACCEPT.getStatus())
+                .set(OrderInfo::getStatus,OrderStatus.CANCEL_ORDER.getStatus());
+
+        int rows = orderInfoMapper.update(null, lambdaUpdateWrapper);
+
+        if (rows == 1) {
+            // 更新成功 删除订单redis订单标识
+            redisTemplate.delete(RedisConstant.ORDER_ACCEPT_MARK + orderId);
+        }
+    }
 }

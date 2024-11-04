@@ -47,4 +47,10 @@ public interface OrderInfoService extends IService<OrderInfo> {
     Boolean updateOrderPayStatus(String orderNo);
 
     OrderRewardVo getOrderRewardFee(String orderNo);
+
+    /**
+     * 根据订单Id 取消订单
+     * @param orderId
+     */
+    void orderCancel(long orderId);
 }
