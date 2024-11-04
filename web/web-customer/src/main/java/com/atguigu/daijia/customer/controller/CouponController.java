@@ -7,6 +7,7 @@ import com.atguigu.daijia.customer.service.CouponService;
 import com.atguigu.daijia.model.vo.base.PageVo;
 import com.atguigu.daijia.model.vo.coupon.NoReceiveCouponVo;
 import com.atguigu.daijia.model.vo.coupon.NoUseCouponVo;
+import com.atguigu.daijia.model.vo.coupon.UsedCouponVo;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -51,6 +52,20 @@ public class CouponController {
             @PathVariable Long limit) {
         Long customerId = AuthContextHolder.getUserId();
         PageVo<NoUseCouponVo> pageVo = couponService.findNoUsePage(customerId, page, limit);
+        return Result.ok(pageVo);
+    }
+
+    @Operation(summary = "查询已使用优惠券分页列表")
+    @GuiguLogin
+    @GetMapping("findUsedPage/{page}/{limit}")
+    public Result<PageVo<UsedCouponVo>> findUsedPage(
+            @Parameter(name = "page", description = "当前页码", required = true)
+            @PathVariable Long page,
+
+            @Parameter(name = "limit", description = "每页记录数", required = true)
+            @PathVariable Long limit) {
+        Long customerId = AuthContextHolder.getUserId();
+        PageVo<UsedCouponVo> pageVo = couponService.findUsedPage(customerId, page, limit);
         return Result.ok(pageVo);
     }
 }
